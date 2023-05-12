@@ -4,14 +4,6 @@ const ctrlWrapper = require("../helpers/ctrlWrapper");
 
 const HttpError = require("../helpers/HttpError");
 
-const Joi = require("joi");
-
-const addSchema = Joi.object({
-  name: Joi.string().required(),
-  email: Joi.string().required(),
-  phone: Joi.string().required(),
-});
-
 const listContacts = async (req, res) => {
   const result = await contacts.listContacts();
   res.status(200).json(result);
@@ -38,20 +30,12 @@ const removeContact = async (req, res) => {
 };
 
 const addContact = async (req, res) => {
-  const { error } = addSchema.validate(req.body);
-  if (error) {
-    throw HttpError(
-      400,
-      `missing required ${error.message.split(" ")[0].replace(/"/g, "")} field`
-    );
-  }
   const result = await contacts.addContact(req.body);
   res.status(201).json(result);
 };
 
 const updateContact = async (req, res) => {
-  const { error } = addSchema.validate(req.body);
-  if (error) {
+  if (!req.body) {
     throw HttpError(400, "Missing fields");
   }
   const { id } = req.params;
